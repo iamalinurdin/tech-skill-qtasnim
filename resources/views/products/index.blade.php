@@ -1,6 +1,8 @@
 @extends('layout')
 
 @section('content')
+<a href="{{ route('products.create') }}" class="btn btn-primary mb-3">Add product</a>
+
 <div class="card">
   <div class="card-body">
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">

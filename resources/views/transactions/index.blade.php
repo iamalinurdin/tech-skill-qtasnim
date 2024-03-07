@@ -1,9 +1,24 @@
 @extends('layout')
 
 @section('content')
+<a href="{{ route('transactions.create') }}" class="btn btn-primary mb-3">Add transaction</a>
+
 <div class="card">
   <div class="card-body">
-    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+    <form action="{{ route('transactions.index') }}">
+      <div class="row d-flex align-items-end">
+        <div class="col-3 form-group">
+          <label for="search">Search name</label>
+          <input type="search" class="form-control" name="search" id="search" value="{{ Request::query('search') ?? '' }}">
+        </div>
+        <div class="col-2">
+          <div class="form-group">
+            <button class="btn btn-primary">Search</button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <table class="table table-bordered" width="100%" cellspacing="0">
       <thead>
         <th>Date</th>
         <th>Product</th>

@@ -12,9 +12,16 @@ class TransactionController extends Controller
   /**
    * Display a listing of the resource.
    */
-  public function index()
+  public function index(Request $request)
   {
+    $search = $request->query('search');
     $transactions = Transaction::with('product')->get();
+
+    if ($search) {
+      $transactions = Transaction::whereHas('product', function ($builder) use ($search) {
+        $builder->where('name', 'LIKE', "%{$search}%");
+      })->get();
+    }
 
     return view('transactions.index', compact('transactions'));
   }

@@ -55,7 +55,9 @@ class ProductController extends Controller
    */
   public function edit(string $id)
   {
-    //
+    $product = Product::find($id);
+
+    return view('products.form', compact('product'));
   }
 
   /**
@@ -63,7 +65,35 @@ class ProductController extends Controller
    */
   public function update(Request $request, string $id)
   {
-    //
+    $product = Product::find($id);
+
+    $product->update([
+      'name' => $request->post('name'),
+      'category' => $request->post('category'),
+    ]);
+
+    $product->stock()->update([
+      'stock' => $request->post('stock')
+    ]);
+
+    $currentStock = $product->stock->stock;
+    $hasSold = 0;
+
+    foreach ($product->transactions as $transaction) {
+
+      $product->transactions()->where('id', $transaction->id)->update([
+        'last_stock' => $currentStock - $hasSold
+      ]);
+
+      $hasSold += $transaction->sold;
+
+    }
+
+    $product->stock()->update([
+      'stock' => $currentStock - $hasSold
+    ]);
+
+    return redirect()->route('products.index');
   }
 
   /**
@@ -71,6 +101,12 @@ class ProductController extends Controller
    */
   public function destroy(string $id)
   {
-    //
+    $product = Product::find($id);
+
+    $product->transactions()->delete();
+    $product->stock()->delete();
+    $product->delete();
+
+    return redirect()->route('products.index');
   }
 }
